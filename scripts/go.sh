@@ -24,7 +24,7 @@ echo "Verificar se o ambiente '$NOME_AMBIENTE' existe"
 #conda env create -f "$ENV_FILE"
 #echo "Ambiente criado com sucesso."
 
-if conda env list | grep -q "$NOME_DO_AMBIENTE"; then
+if conda env list | grep -q "$NOME_AMBIENTE"; then
 	echo "Ambiente já existe"
 else
 	echo "Criar ambiente"
