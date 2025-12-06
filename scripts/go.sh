@@ -42,3 +42,4 @@ echo "Ambiente ativo: $CONDA_DEFAULT_ENV"
 
 echo "Executar Makefile"
 make all
+make dados

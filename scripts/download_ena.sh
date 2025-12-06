@@ -19,16 +19,29 @@ ENA_FTP_BASE="ftp.sra.ebi.ac.uk/vol1/fastq" # URL base do FTP do ENA para fichei
 PREFIXO_DIR="${ACCESSION:0:6}"
 
 # URL - Read 1
+R1_OUT="${DIR_SAIDA}/${ACCESSION}_1.fastq.gz"
 URL_R1="ftp://${ENA_FTP_BASE}/${PREFIXO_DIR}/${VOLUME}/${ACCESSION}/${ACCESSION}_1.fastq.gz"
-echo "A iniciar o download para o accession: $ACCESSION (R1)"
-wget -P "$DIR_SAIDA" "$URL_R1"
+if [ ! -f "$R1_OUT" ]; then
+	echo "A iniciar o download para o accession: $ACCESSION (R1)"
+	wget -O "$R1_OUT" "$URL_R1"
+else
+	echo "Ficheiro $R1_OUT já existe."
+fi
+
+#URL_R1="ftp://${ENA_FTP_BASE}/${PREFIXO_DIR}/${VOLUME}/${ACCESSION}/${ACCESSION}_1.fastq.gz"
+#echo "A iniciar o download para o accession: $ACCESSION (R1)"
+#wget -P "$DIR_SAIDA" "$URL_R1"
 
 # Apenas se for paired-end -> URL - Read 2
 if [ "$PAIRED" = "yes" ]; then
 	URL_R2="ftp://${ENA_FTP_BASE}/${PREFIXO_DIR}/${VOLUME}/${ACCESSION}/${ACCESSION}_2.fastq.gz"
-	echo "A iniciar o download para o accession: $ACCESSION (R2)"
-	wget -P "$DIR_SAIDA" "$URL_R2"
+	R2_OUT="${DIR_SAIDA}/${ACCESSION}_2.fastq.gz"
+	if [ ! -f "$R2_OUT" ]; then
+		echo "A iniciar o download para o accession: $ACCESSION (R2)"
+		wget -O "$R2_OUT" "$URL_R2"
+	else
+		echo "Ficheiro $R2_OUT já existe."
+	fi
 fi
 
-echo "A guardar em $DIR_SAIDA"
 echo "Download de $ACCESSION concluído."
