@@ -11,13 +11,13 @@
 
 ├── env
 
-│   ├── environment.yml
+│  ├── environment.yml
 
 └── scripts
 
-    ├── analisar_scripts.sh
+   ├── analisar_scripts.sh
 
-    └── go.sh
+   └── go.sh
 
 ### Ferramentas utilizadas
 name: genomica_tp1
