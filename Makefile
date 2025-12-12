@@ -26,7 +26,7 @@ THREADS := 11
 
 # Econtrar dinamicamente todos os scripts
 SCRIPTS_A_ANALISAR := $(wildcard $(DIR_SCRIPTS)/*.sh)
-# Fichiero de saída que irá guardar o resultado da análise
+# Ficheiro de saída que irá guardar o resultado da análise
 FICHEIRO_RESULTADO := logs/analise_qualidade.log
 
 # Regra Default
@@ -34,6 +34,7 @@ all_verificacao: $(FICHEIRO_RESULTADO)
 # Regra Principal
 $(FICHEIRO_RESULTADO): $(SCRIPTS_A_ANALISAR) # verificar se algum script é mais recente
 	@echo "Um ou mais scripts foram modificados. A executar a análise de qualidade"
+	@mkdir -p logs
 	@./$(DIR_SCRIPTS)/analisar_scripts.sh > $(FICHEIRO_RESULTADO)
 	@echo "Análise concluída. Resultados guardados em $(FICHEIRO_RESULTADO)"
 
@@ -44,9 +45,11 @@ $(FICHEIRO_RESULTADO): $(SCRIPTS_A_ANALISAR) # verificar se algum script é mais
 # Default target
 all_download: bootstrap download_data download_reference check_data stage0 stage1
 
-bootstrap: data/raw results/qc data/clean results/assemblies
+bootstrap: data/raw data/reference results/qc data/clean results/assemblies
 
 data/raw:
+	mkdir -p $@
+data/reference:
 	mkdir -p $@
 results/qc:
 	mkdir -p $@
@@ -205,19 +208,19 @@ results/evaluation/quast_ref:
 	mkdir -p $@
 
 
-evaluation_data: download_busco eval_quast eval_busco_ill eval_busco_nano eval_busco_nano_pol eval_quast_ref eval_busco_ref
+evaluation_data: download_busco eval_quast eval_busco_ill eval_busco_nano eval_busco_nano_pol eval_busco_hybrid eval_quast_ref eval_busco_ref
 
 eval_quast: results/evaluation/quast
-	quast.py -o results/evaluation/quast \
+	conda run -n genomica_tp1 quast.py -o results/evaluation/quast \
 		-t $(THREADS) \
-		--label "Flye, SPAdes_Illumina, Flye_Polished" \
+		--label "SPAdes_Illumina, Flye, Flye_Polished, Hybrid" \
 		results/assemblies/illumina/scaffolds.fasta \
 		results/assemblies/nanopore/assembly.fasta \
 		results/assemblies/flye_polished/flye_polished.fasta \
 		results/assemblies/hybrid/scaffolds.fasta
 
 eval_quast_ref: results/evaluation/quast_ref
-	quast.py -o results/evaluation/quast_ref \
+	conda run -n genomica_tp1 quast.py -o results/evaluation/quast_ref \
 		-t $(THREADS) \
 		data/reference/$(REFERENCE_ID).fna
 
